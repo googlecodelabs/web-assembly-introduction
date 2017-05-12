@@ -4,29 +4,27 @@
     return WebAssembly.instantiate(bytes, importObject);
   }
 
-  const info = {
-    'env': {
-      // 'ABORT': 0,
-      // 'DYNAMICTOP_PTR': 2064,
-      'abortStackOverflow': _ => {
-        throw new Error('overflow');
-      },
-      'STACKTOP': 0,
-      'STACK_MAX': 5244960,
-      'tableBase': 0,
-      'memoryBase': 1024,
-      'table': new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}),
-      'memory': new WebAssembly.Memory({initial: 256, maximum: 256}),
+  const env = {
+    // 'ABORT': 0,
+    // 'DYNAMICTOP_PTR': 2064,
+    'STACKTOP': 0,
+    'STACK_MAX': 5244960,
+    'abortStackOverflow': _ => {
+      throw new Error('overflow');
     },
+    'tableBase': 0,
+    'memoryBase': 1024,
+    'table': new WebAssembly.Table({initial: 0, maximum: 0, element: "anyfunc"}),
+    'memory': new WebAssembly.Memory({initial: 256, maximum: 256}),
   };
 
-  create('output.wasm', info).then(thing => {
-    console.info('got thing', thing);
+  env['_print'] = arg => console.info('logging', arg);
 
-    console.info('answer', thing.instance.exports._myFunction());
-    console.info('answer', thing.instance.exports._myFunction());
-    console.info('answer', thing.instance.exports._myFunction());
-    console.info('answer', thing.instance.exports._myFunction());
+  create('output.wasm', {env}).then(thing => {
+    const o = thing.instance.exports;
+
+    let out = o._myFunction(123);
+    console.info('got', out);
   });
 
 </script>
