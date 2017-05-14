@@ -115,5 +115,10 @@ byte *board_ref() {
 // Clears the board.
 void board_init() {
   clear_board_ref(board);
+
+  // TODO: dummy board setup
+  board[85] = 255;
+  board[120] = 255;
+  board[132] = 255;
 }
 

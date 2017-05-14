@@ -1,5 +1,5 @@
 <script>
-    async function create(path, importObject) {
+  async function create(path, importObject) {
     const bytes = await window.fetch(path).then(x => x.arrayBuffer());
     return WebAssembly.instantiate(bytes, importObject);
   }
@@ -26,12 +26,7 @@
   create('output.wasm', {env}).then(thing => {
     const o = thing.instance.exports;
 
-    let out = o._myFunction(123);
-    console.info('got', out);
-
     window.asm = o;
-    o._board_init();
-
     draw();
   });
 
@@ -66,14 +61,28 @@
     context.putImageData(data, 0, 0)
   }
 
-  function steps() {
-    window.requestAnimationFrame(function() {
-      draw();
-      const out = asm._board_step();
-      if (out < 0) { return; }  // we're stable
+  window.onload = ev => {
+    let run = false;
+
+    function steps() {
+      window.requestAnimationFrame(function() {
+        draw();
+        const out = asm._board_step();
+        if (out < 0) { return; }  // we're stable
+        if (run) { steps(); }
+      });
+    }
+
+    start.onclick = ev => {
+      asm ._board_init();
+      run = true;
       steps();
-    });
-  }
+    };
+    pp.onclick = ev => {
+      run = !run;
+      if (run) { steps(); }
+    };
+  };
 
 </script>
 <style>
@@ -85,3 +94,7 @@
 
 <canvas id="canvas">
 </canvas>
+<div>
+<button id="start">Start</button>
+<button id="pp">Play/Pause</button>
+</div>
