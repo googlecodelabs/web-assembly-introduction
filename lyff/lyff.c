@@ -120,5 +120,15 @@ void board_init() {
   board[85] = 255;
   board[120] = 255;
   board[132] = 255;
+  board[800] = 255;
+  board[720] = 254;
+  board[700] = 255;
+  board[600] = 255;
+  board[601] = 255;
+  board[602] = 255;
+  board[603] = 255;
+  board[604] = 255;
+  board[605] = 255;
+  board[606] = 255;
 }
 
